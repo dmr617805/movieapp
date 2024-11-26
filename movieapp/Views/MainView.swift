@@ -65,7 +65,7 @@ struct MainView: View {
             .sheet(isPresented: $showingSearchMovie, content: {
                 MovieSearchView(isPresented: $showingSearchMovie, viewModel: viewModel)
             })
-            .searchable(text: $searchText, prompt: "Buscar peliculas")
+            .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Buscar peliculas")
             .onAppear{
                 viewModel.fetchMoviesByType(movieSearchType: .nowPlaying)
                 viewModel.fetchGenres()
