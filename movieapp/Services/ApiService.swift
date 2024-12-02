@@ -107,6 +107,64 @@ class ApiService {
     }
     
     
+
+    
+    
+    
+    func getMovieById(
+            id: String,
+            language: String = "en-US",
+            completion: @escaping (Result<Movie, Error>) -> Void) {
+                
+        let endpoint = "movie/\(id)"
+        let queryParameters: [String: String] = [
+            "language": language
+        ]
+
+        guard let request = createRequest(endpoint: endpoint, queryParameters: queryParameters) else {
+            completion(.failure(NSError(domain: "ApiService", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid request"])))
+            return
+        }
+
+        performRequest(request: request, decodingType: Movie.self) { result in
+            switch result {
+            case .success(let response):
+                completion(.success(response))
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
+    
+    
+    func getRecommendations(
+            movieId: Int,
+            language: String = "en-US",
+            page: Int = 1,
+            completion: @escaping (Result<[Recommendation], Error>) -> Void) {
+                
+        let endpoint = "movie/\(movieId)/recommendations"
+        let queryParameters: [String: String] = [
+            "language": language,
+            "page": "\(page)"
+        ]
+
+        guard let request = createRequest(endpoint: endpoint, queryParameters: queryParameters) else {
+            completion(.failure(NSError(domain: "ApiService", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid request"])))
+            return
+        }
+
+        performRequest(request: request, decodingType: RecommendationResponse.self) { result in
+            switch result {
+            case .success(let response):
+                completion(.success(response.results))
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
+    
+    
     func getMoviesNowPlaying(
             language: String = "en-US",
             page: Int = 1,
@@ -217,28 +275,28 @@ class ApiService {
     
     
     
-    func getGenres(language: String = "es",completion: @escaping (Result<[Genre], Error>) -> Void) {
+    func getGenres(
+            language: String = "en",
+            completion: @escaping (Result<[Genre], Error>) -> Void) {
+                
         let endpoint = "genre/movie/list"
         let queryParameters: [String: String] = [
-            "language": language,
+            "language": language
         ]
 
         guard let request = createRequest(endpoint: endpoint, queryParameters: queryParameters) else {
             completion(.failure(NSError(domain: "ApiService", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid request"])))
             return
         }
-        
+
         performRequest(request: request, decodingType: GenresResponse.self) { result in
             switch result {
-            case .success(let genresResponse):
-                completion(.success(genresResponse.genres))
+            case .success(let response):
+                completion(.success(response.genres))
             case .failure(let error):
                 completion(.failure(error))
             }
         }
-        
-
-
     }
     
 }

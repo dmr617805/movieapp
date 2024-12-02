@@ -10,9 +10,9 @@ import SwiftUI
 
 class MovieViewModel: ObservableObject {
     @Published var movies: [Movie] = []
-    @Published var genres: [Genre] = []
     @Published var errorMessage: String? = nil
-    
+    @Published var genres: [Genre] = []
+    @Published var recommendtions: [Recommendation] = []
     @Published var selectedMovieSearchType: MovieSearchType?
     
     private let apiService = ApiService()
@@ -26,7 +26,37 @@ class MovieViewModel: ObservableObject {
                     self.movies = moviesresponse
                 }
             case .failure(let error):
-                print("ocurrio un error: \(error.localizedDescription)")
+                self.errorMessage =  "ocurrio un error: \(error.localizedDescription)"
+            }
+        }
+    }
+    
+    func fetchRecommendations(movieId: Int) {
+        apiService.getRecommendations(movieId: movieId) {
+            result in
+            switch result {
+            case .success(let response):
+                DispatchQueue.main.async {
+                    self.recommendtions = response
+                }
+            case .failure(let error):
+                self.errorMessage =  "ocurrio un error: \(error.localizedDescription)"
+            }
+        }
+    }
+    
+    
+    
+    func fetchGenres() {
+        apiService.getGenres() {
+            result in
+            switch result {
+            case .success(let response):
+                DispatchQueue.main.async {
+                    self.genres = response
+                }
+            case .failure(let error):
+                self.errorMessage =  "ocurrio un error: \(error.localizedDescription)"
             }
         }
     }
@@ -43,7 +73,7 @@ class MovieViewModel: ObservableObject {
                         self.movies = moviesresponse
                     }
                 case .failure(let error):
-                    print("ocurrio un error: \(error.localizedDescription)")
+                    self.errorMessage =  "ocurrio un error: \(error.localizedDescription)"
                 }
             }
         case .popular:
@@ -55,7 +85,7 @@ class MovieViewModel: ObservableObject {
                         self.movies = moviesresponse
                     }
                 case .failure(let error):
-                    print("ocurrio un error: \(error.localizedDescription)")
+                    self.errorMessage =  "ocurrio un error: \(error.localizedDescription)"
                 }
             }
         case .topRated:
@@ -67,7 +97,7 @@ class MovieViewModel: ObservableObject {
                         self.movies = moviesresponse
                     }
                 case .failure(let error):
-                    print("ocurrio un error: \(error.localizedDescription)")
+                    self.errorMessage =  "ocurrio un error: \(error.localizedDescription)"
                 }
             }
             
@@ -80,11 +110,13 @@ class MovieViewModel: ObservableObject {
                         self.movies = moviesresponse
                     }
                 case .failure(let error):
-                    print("ocurrio un error: \(error.localizedDescription)")
+                    self.errorMessage =  "ocurrio un error: \(error.localizedDescription)"
                 }
             }
         }
     }
+    
+
     
 }
 
@@ -106,14 +138,15 @@ struct ContentView: View {
                 
                 MovieFilterView(viewModel: viewModel)
                 
-                List(filterMovies, id: \.id) { movie in
-                    VStack(alignment: .leading) {
+                List(filterMovies, id: \.id) {
+                    movie in
+                    NavigationLink(destination: MovieDetailView(viewModel: viewModel, movie: movie)){
                         MovieCardView(movie: movie)
                     }
                 }
                 
                 if let error = viewModel.errorMessage {
-                    Text("Error: \(error)")
+                    Text(error)
                         .foregroundColor(.red)
                 }
             }
@@ -121,6 +154,7 @@ struct ContentView: View {
             .searchable(text: $searchText, prompt: "Buscar peliculas")
             .onAppear{
                 viewModel.fetchMoviesByType(movieSearchType: .nowPlaying)
+                viewModel.fetchGenres()
             }
         }
     }
