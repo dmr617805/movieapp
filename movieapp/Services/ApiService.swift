@@ -78,7 +78,7 @@ class ApiService {
     func searchMovies(
             query: String,
             includeAdult: Bool = false,
-            language: String = "en-US",
+            year: String = "",
             page: Int = 1,
             completion: @escaping (Result<[Movie], Error>) -> Void) {
                 
@@ -86,7 +86,7 @@ class ApiService {
         let queryParameters: [String: String] = [
             "query": query,
             "include_adult": "\(includeAdult)",
-            "language": language,
+            "year": year,
             "page": "\(page)"
         ]
 
@@ -103,11 +103,7 @@ class ApiService {
                 completion(.failure(error))
             }
         }
-
     }
-    
-    
-
     
     
     

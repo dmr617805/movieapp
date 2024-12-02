@@ -5,128 +5,15 @@
 //  Created by m1 on 01/12/2024.
 //
 
+
 import SwiftUI
-
-
-class MovieViewModel: ObservableObject {
-    @Published var movies: [Movie] = []
-    @Published var errorMessage: String? = nil
-    @Published var genres: [Genre] = []
-    @Published var recommendations: [Recommendation] = []
-    @Published var selectedMovieSearchType: MovieSearchType?
-    
-    private let apiService = ApiService()
-    
-    func fetchMovies(query: String) {
-        apiService.getMoviesUpcoming() {
-            result in
-            switch result {
-            case .success(let moviesresponse):
-                DispatchQueue.main.async {
-                    self.movies = moviesresponse
-                }
-            case .failure(let error):
-                self.errorMessage =  "ocurrio un error: \(error.localizedDescription)"
-            }
-        }
-    }
-    
-    func fetchRecommendations(movieId: Int) {
-        apiService.getRecommendations(movieId: movieId) {
-            result in
-            switch result {
-            case .success(let response):
-                DispatchQueue.main.async {
-                    self.recommendations = response
-                }
-            case .failure(let error):
-                self.errorMessage =  "ocurrio un error: \(error.localizedDescription)"
-            }
-        }
-    }
-    
-    
-    
-    func fetchGenres() {
-        apiService.getGenres() {
-            result in
-            switch result {
-            case .success(let response):
-                DispatchQueue.main.async {
-                    self.genres = response
-                }
-            case .failure(let error):
-                self.errorMessage =  "ocurrio un error: \(error.localizedDescription)"
-            }
-        }
-    }
-    
-    func fetchMoviesByType(movieSearchType: MovieSearchType){
-        selectedMovieSearchType = movieSearchType
-        switch movieSearchType {
-        case .nowPlaying:
-            apiService.getMoviesNowPlaying() {
-                result in
-                switch result {
-                case .success(let moviesresponse):
-                    DispatchQueue.main.async {
-                        self.movies = moviesresponse
-                    }
-                case .failure(let error):
-                    self.errorMessage =  "ocurrio un error: \(error.localizedDescription)"
-                }
-            }
-        case .popular:
-            apiService.getMoviesPopular() {
-                result in
-                switch result {
-                case .success(let moviesresponse):
-                    DispatchQueue.main.async {
-                        self.movies = moviesresponse
-                    }
-                case .failure(let error):
-                    self.errorMessage =  "ocurrio un error: \(error.localizedDescription)"
-                }
-            }
-        case .topRated:
-            apiService.getMoviesTopRated() {
-                result in
-                switch result {
-                case .success(let moviesresponse):
-                    DispatchQueue.main.async {
-                        self.movies = moviesresponse
-                    }
-                case .failure(let error):
-                    self.errorMessage =  "ocurrio un error: \(error.localizedDescription)"
-                }
-            }
-            
-        case .upcoming:
-            apiService.getMoviesUpcoming() {
-                result in
-                switch result {
-                case .success(let moviesresponse):
-                    DispatchQueue.main.async {
-                        self.movies = moviesresponse
-                    }
-                case .failure(let error):
-                    self.errorMessage =  "ocurrio un error: \(error.localizedDescription)"
-                }
-            }
-        }
-    }
-    
-
-    
-}
-
-
 
 struct ContentView: View {
     
     @StateObject private var viewModel = MovieViewModel()
-    @State private var query = "rambo"
     @State private var searchText = ""
+    @State var showingSearchMovie =  false
+    
     
     var filterMovies: [Movie]{
         guard !searchText.isEmpty else {return viewModel.movies}
@@ -151,7 +38,34 @@ struct ContentView: View {
                         .foregroundColor(.red)
                 }
             }
-            .navigationTitle("Películas")
+            .navigationTitle("")
+            .toolbar{
+                
+                ToolbarItem(placement: .navigation) { // Centra el contenido en el título
+                          HStack(spacing: 8) {
+                              Image(systemName: "popcorn") // Icono de película
+                                  .resizable()
+                                  .scaledToFit()
+                                  .foregroundStyle(Color.red)
+                                  .frame(width: 24, height: 24) // Tamaño del icono
+                              Text("Palomeras")
+                                  .font(.title2)
+                                  .foregroundStyle(Color.green)
+                                  .bold()
+                          }
+                      }
+                      
+                      ToolbarItem(placement: .topBarTrailing) {
+                          Button(action: { showingSearchMovie.toggle() }) {
+                              Image(systemName: "magnifyingglass.circle")
+                          }
+                      }
+                
+                
+            }
+            .sheet(isPresented: $showingSearchMovie, content: {
+                MovieSearchView(isPresented: $showingSearchMovie, viewModel: viewModel)
+            })
             .searchable(text: $searchText, prompt: "Buscar peliculas")
             .onAppear{
                 viewModel.fetchMoviesByType(movieSearchType: .nowPlaying)

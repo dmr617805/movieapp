@@ -14,9 +14,9 @@ enum MovieSearchType: String, CaseIterable {
     var icon: String {
         switch self {
             case .nowPlaying: return "theatermasks.circle"
-            case .popular: return "person.3.fill"
+            case .popular: return "person.3"
             case .topRated: return "medal.star"
-            case .upcoming: return "bell.and.waves.left.and.right.fill"
+            case .upcoming: return "bell.and.waves.left.and.right"
         }
     }
 }

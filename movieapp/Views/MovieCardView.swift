@@ -25,10 +25,12 @@ struct MovieCardView: View {
                         .clipped()
                        
                 }else{
-                     Image("no-image")
+                    Image("no-image")
                         .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(height: 500)
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 380, height: 500)
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                        .shadow(radius: 8.0)
                 }
                 
                 
