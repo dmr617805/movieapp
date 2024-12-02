@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct ContentView: View {
+struct MainView: View {
     
     @StateObject private var viewModel = MovieViewModel()
     @State private var searchText = ""
@@ -51,6 +51,7 @@ struct ContentView: View {
                               Text("Palomeras")
                                   .font(.title2)
                                   .foregroundStyle(Color.green)
+                                  .opacity(0.9)
                                   .bold()
                           }
                       }
@@ -76,5 +77,5 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView()
+    MainView()
 }
