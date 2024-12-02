@@ -12,7 +12,7 @@ class MovieViewModel: ObservableObject {
     @Published var movies: [Movie] = []
     @Published var errorMessage: String? = nil
     @Published var genres: [Genre] = []
-    @Published var recommendtions: [Recommendation] = []
+    @Published var recommendations: [Recommendation] = []
     @Published var selectedMovieSearchType: MovieSearchType?
     
     private let apiService = ApiService()
@@ -37,7 +37,7 @@ class MovieViewModel: ObservableObject {
             switch result {
             case .success(let response):
                 DispatchQueue.main.async {
-                    self.recommendtions = response
+                    self.recommendations = response
                 }
             case .failure(let error):
                 self.errorMessage =  "ocurrio un error: \(error.localizedDescription)"
@@ -127,6 +127,7 @@ struct ContentView: View {
     @StateObject private var viewModel = MovieViewModel()
     @State private var query = "rambo"
     @State private var searchText = ""
+    
     var filterMovies: [Movie]{
         guard !searchText.isEmpty else {return viewModel.movies}
         return viewModel.movies.filter{ $0.title.localizedCaseInsensitiveContains(searchText) }

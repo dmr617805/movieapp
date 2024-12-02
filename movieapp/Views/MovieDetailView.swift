@@ -10,7 +10,6 @@ import SwiftUI
 struct MovieDetailView: View {
     @ObservedObject var viewModel: MovieViewModel
     let movie: Movie
-    let imageUrl: String = "https://media.themoviedb.org/t/p/w220_and_h330_face"
     
     var body: some View {
         ScrollView{
@@ -19,7 +18,7 @@ struct MovieDetailView: View {
                 
                 if let posterPath = movie.posterPath{
                     
-                    AsyncImage(url: URL(string: imageUrl + posterPath)) {
+                    AsyncImage(url: URL(string: Constants.imageUrl + posterPath)) {
                         image in
                         image.image?
                             .resizable()
@@ -32,8 +31,11 @@ struct MovieDetailView: View {
                 }else{
                     Image("no-image")
                         .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(height: 500)
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 380, height: 500)
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                        .shadow(radius: 8.0)
+                     
                 }
                 
                 
@@ -72,22 +74,13 @@ struct MovieDetailView: View {
                     }
                 }.padding(.vertical)
                 
-                
-                VStack(alignment: .leading)
+                VStack(alignment: .leading, spacing: 10)
                 {
                     Text("Resumen").font(.title2).bold().padding(.bottom)
                     Text(movie.overview).font(.headline)
+                    
+                    RecommendationsView(recommendations: viewModel.recommendations).padding(.top)
                 }
-                
-                Text("Recomendaciones").font(.title2).bold().padding(.bottom)
-                HStack{
-                    ForEach(viewModel.recommendtions, id:\.self.id){
-                        recommendation in
-                        Text(recommendation.title)
-                    }
-                }
-                
-                
                 
                 
             }.padding()
@@ -101,7 +94,7 @@ struct MovieDetailView: View {
 
 #Preview {
     let viewModel = MovieViewModel()
-    let movie = Movie(adult: true, backdropPath: "", genreIDs: [10], id: 10, originalLanguage: "", originalTitle: "Venom: The Last Dance", overview: "Eddie and Venom are on the run. Hunted by both of their worlds and with the net closing in, the duo are forced into a devastating decision that will bring the curtains down on Venom and Eddie's last dance.", popularity: 10, posterPath:"/aosm8NMQ3UyoBVpSxyimorCQykC.jpg", releaseDate: "2024-10-22", title: "Venom: The Last Dance", video: false, voteAverage: 6.443, voteCount: 964
+    let movie = Movie(adult: true, backdropPath: "", genreIDs: [10], id: 1241982, originalLanguage: "", originalTitle: "Venom: The Last Dance", overview: "Eddie and Venom are on the run. Hunted by both of their worlds and with the net closing in, the duo are forced into a devastating decision that will bring the curtains down on Venom and Eddie's last dance.", popularity: 10, posterPath:"/aosm8NMQ3UyoBVpSxyimorCQykC.jpg", releaseDate: "2024-10-22", title: "Venom: The Last Dance", video: false, voteAverage: 6.443, voteCount: 964
                       
     )
     MovieDetailView(viewModel: viewModel, movie: movie)

@@ -9,7 +9,6 @@ import SwiftUI
 
 struct MovieCardView: View {
     let movie: Movie
-    let imageUrl: String = "https://media.themoviedb.org/t/p/w220_and_h330_face"
     
     var body: some View {
         VStack(alignment: .center, spacing: 50){
@@ -17,7 +16,7 @@ struct MovieCardView: View {
                 
                 if let posterPath = movie.posterPath{
                     
-                    AsyncImage(url: URL(string: imageUrl + posterPath)) {
+                    AsyncImage(url: URL(string: Constants.imageUrl + posterPath)) {
                         image in
                         image.image?
                             .resizable()
