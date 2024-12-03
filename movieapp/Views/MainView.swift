@@ -61,8 +61,6 @@ struct MainView: View {
                               Image(systemName: "magnifyingglass.circle")
                           }
                       }
-                
-                
             }
             .sheet(isPresented: $showingSearchMovie, content: {
                 MovieSearchView(isPresented: $showingSearchMovie, viewModel: viewModel)

@@ -50,8 +50,6 @@ class MovieViewModel: ObservableObject {
         }
     }
     
-    
-    
     func fetchGenres() {
         apiService.getGenres() {
             result in
@@ -121,6 +119,6 @@ class MovieViewModel: ObservableObject {
         }
     }
     
-
+    
     
 }
